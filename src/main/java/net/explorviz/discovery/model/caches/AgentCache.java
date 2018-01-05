@@ -2,37 +2,23 @@ package net.explorviz.discovery.model.caches;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import net.explorviz.discovery.model.Agent;
 import net.explorviz.discovery.model.Process;
 
 public class AgentCache {
 
-	// TODO test classic for loop, still nullpointer? No? => Try forEach
-
 	private final List<Agent> agents = new ArrayList<Agent>();
 
 	public Agent getAgentForIPAndPort(final String ip, final String port) {
-		final int size = this.agents.size();
-
-		for (int i = 0; i < size; i++) {
-			final Agent tempAgent = this.agents.get(i);
-			if (tempAgent.getAgentIP().equals(ip) && tempAgent.getAgentPort().equals(port)) {
-				return tempAgent;
-			}
-		}
-		return null;
+		return agents.stream().filter(Objects::nonNull)
+				.filter(a -> a.getAgentIP().equals(ip) && a.getAgentPort().equals(port)).findFirst().orElse(null);
 	}
 
 	public Agent getAgent(final Agent agent) {
-		final int size = this.agents.size();
-
-		for (int i = 0; i < size; i++) {
-			if (this.agents.get(i).equals(agent)) {
-				return this.agents.get(i);
-			}
-		}
-		return null;
+		return agents.stream().filter(Objects::nonNull).filter(a -> a.equals(agent)).findFirst().orElse(null);
 	}
 
 	public boolean updateProcess(final Process process) {
@@ -76,14 +62,8 @@ public class AgentCache {
 		final Agent responsibleAgent = getAgent(p.getResponsibleAgent());
 
 		if (responsibleAgent != null) {
-			final List<Process> agentsProcessList = responsibleAgent.getProcessList();
-			final int size = agentsProcessList.size();
-
-			for (int i = 0; i < size; i++) {
-				if (agentsProcessList.get(i).equals(p)) {
-					return agentsProcessList.get(i);
-				}
-			}
+			return responsibleAgent.getProcessList().stream().filter(Objects::nonNull)
+					.filter(process -> process.equals(p)).findFirst().orElse(null);
 		}
 
 		return null;
@@ -91,14 +71,13 @@ public class AgentCache {
 	}
 
 	public List<Process> getAllProcessesOfAllAgents() {
-		final List<Process> processList = new ArrayList<Process>();
-		final int size = this.agents.size();
-
-		for (int i = 0; i < size; i++) {
-			processList.addAll(this.agents.get(i).getProcessList());
+		if (this.agents.size() > 0) {
+			return this.agents.stream().filter(Objects::nonNull)
+					.flatMap(agent -> agent.getProcessList().stream().filter(Objects::nonNull))
+					.collect(Collectors.toList());
+		} else {
+			return new ArrayList<Process>();
 		}
-
-		return processList;
 	}
 
 	public List<Agent> getAgents() {
