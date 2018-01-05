@@ -35,7 +35,7 @@ public class ClientService {
 		ClientResponse response;
 
 		try {
-			response = webResource.type("application/json").post(ClientResponse.class, payload);
+			response = webResource.type("application/vnd.api+json").post(ClientResponse.class, payload);
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
@@ -61,7 +61,7 @@ public class ClientService {
 		ClientResponse response;
 
 		try {
-			response = webResource.type("application/json").post(ClientResponse.class, process);
+			response = webResource.type("application/vnd.api+json").post(ClientResponse.class, process);
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
