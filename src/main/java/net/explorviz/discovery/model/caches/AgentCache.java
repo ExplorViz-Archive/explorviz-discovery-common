@@ -2,6 +2,7 @@ package net.explorviz.discovery.model.caches;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import net.explorviz.discovery.model.Agent;
@@ -12,12 +13,12 @@ public class AgentCache {
 	private final List<Agent> agents = new ArrayList<Agent>();
 
 	public Agent getAgentForIPAndPort(final String ip, final String port) {
-		return agents.stream().filter(a -> a.getAgentIP().equals(ip) && a.getAgentPort().equals(port)).findFirst()
-				.orElse(null);
+		return agents.stream().filter(Objects::nonNull)
+				.filter(a -> a.getAgentIP().equals(ip) && a.getAgentPort().equals(port)).findFirst().orElse(null);
 	}
 
 	public Agent getAgent(final Agent agent) {
-		return agents.stream().filter(a -> a.equals(agent)).findFirst().orElse(null);
+		return agents.stream().filter(Objects::nonNull).filter(a -> a.equals(agent)).findFirst().orElse(null);
 	}
 
 	public boolean updateProcess(final Process process) {
@@ -61,8 +62,8 @@ public class AgentCache {
 		final Agent responsibleAgent = getAgent(p.getResponsibleAgent());
 
 		if (responsibleAgent != null) {
-			return responsibleAgent.getProcessList().stream().filter(process -> process.equals(p)).findFirst()
-					.orElse(null);
+			return responsibleAgent.getProcessList().stream().filter(Objects::nonNull)
+					.filter(process -> process.equals(p)).findFirst().orElse(null);
 		}
 
 		return null;
@@ -71,7 +72,9 @@ public class AgentCache {
 
 	public List<Process> getAllProcessesOfAllAgents() {
 		if (this.agents.size() > 0) {
-			return this.agents.stream().flatMap(agent -> agent.getProcessList().stream()).collect(Collectors.toList());
+			return this.agents.stream().filter(Objects::nonNull)
+					.flatMap(agent -> agent.getProcessList().stream().filter(Objects::nonNull))
+					.collect(Collectors.toList());
 		} else {
 			return new ArrayList<Process>();
 		}
