@@ -1,5 +1,6 @@
 package net.explorviz.discovery.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.jasminb.jsonapi.annotations.Relationship;
@@ -12,7 +13,7 @@ public class Agent extends BaseModel {
 	private String agentPort;
 
 	@Relationship(value = "process-list")
-	private List<Process> processList;
+	private List<Process> processList = new ArrayList<Process>();
 
 	public Agent() {
 		// For JSON deserialization
