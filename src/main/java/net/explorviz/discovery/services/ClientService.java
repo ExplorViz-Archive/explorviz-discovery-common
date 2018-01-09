@@ -39,7 +39,8 @@ public class ClientService {
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
-						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.");
+						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
+						e);
 			}
 			return false;
 		}
@@ -65,7 +66,8 @@ public class ClientService {
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
-						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.");
+						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
+						e);
 			}
 			return false;
 		}
