@@ -9,8 +9,8 @@ import com.github.jasminb.jsonapi.annotations.Type;
 @Type("agent")
 public class Agent extends BaseModel {
 
-	private String agentIP;
-	private String agentPort;
+	private String ip;
+	private String port;
 
 	@Relationship(value = "processes")
 	private List<Process> processes = new ArrayList<Process>();
@@ -20,37 +20,37 @@ public class Agent extends BaseModel {
 	}
 
 	public Agent(final String agentIP, final String agentPort) {
-		this.agentIP = agentIP;
-		this.agentPort = agentPort;
+		this.ip = agentIP;
+		this.port = agentPort;
 	}
 
-	public String getAgentIP() {
-		return agentIP;
+	public String getIP() {
+		return ip;
 	}
 
-	public void setAgentIP(final String remoteAddr) {
-		this.agentIP = remoteAddr;
+	public void setIP(final String remoteAddr) {
+		this.ip = remoteAddr;
 	}
 
-	public String getAgentPort() {
-		return agentPort;
+	public String getPort() {
+		return port;
 	}
 
-	public void setAgentPort(final String remotePort) {
-		this.agentPort = remotePort;
+	public void setPort(final String remotePort) {
+		this.port = remotePort;
 	}
 
-	public List<Process> getProcessList() {
+	public List<Process> getProcesses() {
 		return processes;
 	}
 
-	public void setProcessList(final List<Process> processList) {
-		this.processes = processList;
+	public void setProcesses(final List<Process> processes) {
+		this.processes = processes;
 	}
 
 	@Override
 	public String toString() {
-		return this.agentIP + ":" + this.agentPort;
+		return this.ip + ":" + this.port;
 	}
 
 }

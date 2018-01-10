@@ -14,7 +14,7 @@ public class AgentCache {
 
 	public Agent getAgentForIPAndPort(final String ip, final String port) {
 		return agents.stream().filter(Objects::nonNull)
-				.filter(a -> a.getAgentIP().equals(ip) && a.getAgentPort().equals(port)).findFirst().orElse(null);
+				.filter(a -> a.getIP().equals(ip) && a.getPort().equals(port)).findFirst().orElse(null);
 	}
 
 	public Agent getAgent(final Agent agent) {
@@ -62,7 +62,7 @@ public class AgentCache {
 		final Agent responsibleAgent = getAgent(p.getResponsibleAgent());
 
 		if (responsibleAgent != null) {
-			return responsibleAgent.getProcessList().stream().filter(Objects::nonNull)
+			return responsibleAgent.getProcesses().stream().filter(Objects::nonNull)
 					.filter(process -> process.equals(p)).findFirst().orElse(null);
 		}
 
@@ -73,7 +73,7 @@ public class AgentCache {
 	public List<Process> getAllProcessesOfAllAgents() {
 		if (this.agents.size() > 0) {
 			return this.agents.stream().filter(Objects::nonNull)
-					.flatMap(agent -> agent.getProcessList().stream().filter(Objects::nonNull))
+					.flatMap(agent -> agent.getProcesses().stream().filter(Objects::nonNull))
 					.collect(Collectors.toList());
 		} else {
 			return new ArrayList<Process>();

@@ -3,6 +3,7 @@ package net.explorviz.discovery.model;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 
@@ -10,11 +11,20 @@ import com.github.jasminb.jsonapi.annotations.Type;
 public class Process extends BaseModel {
 
 	private long pid;
+
+	@JsonProperty("application-name")
 	private String applicationName;
+
+	@JsonProperty("execution-command")
 	private String executionCommand;
+
+	@JsonProperty("shutdown-command")
 	private String shutdownCommand;
 
+	@JsonProperty("monitored-flag")
 	private boolean monitoredFlag;
+
+	@JsonProperty("webserver-flag")
 	private boolean webserverFlag;
 
 	@Relationship(value = "agent")
