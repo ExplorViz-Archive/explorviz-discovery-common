@@ -12,8 +12,8 @@ public class Agent extends BaseModel {
 	private String agentIP;
 	private String agentPort;
 
-	@Relationship(value = "process-list")
-	private List<Process> processList = new ArrayList<Process>();
+	@Relationship(value = "processes")
+	private List<Process> processes = new ArrayList<Process>();
 
 	public Agent() {
 		// For JSON deserialization
@@ -41,11 +41,11 @@ public class Agent extends BaseModel {
 	}
 
 	public List<Process> getProcessList() {
-		return processList;
+		return processes;
 	}
 
 	public void setProcessList(final List<Process> processList) {
-		this.processList = processList;
+		this.processes = processList;
 	}
 
 	@Override

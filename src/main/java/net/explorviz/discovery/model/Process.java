@@ -17,8 +17,8 @@ public class Process extends BaseModel {
 	private boolean monitoredFlag;
 	private boolean webserverFlag;
 
-	@Relationship(value = "responsible-agent")
-	private Agent responsibleAgent;
+	@Relationship(value = "agent")
+	private Agent agent;
 
 	public Process() {
 		// For JSON deserialization
@@ -86,11 +86,11 @@ public class Process extends BaseModel {
 	}
 
 	public Agent getResponsibleAgent() {
-		return responsibleAgent;
+		return agent;
 	}
 
 	public void setResponsibleAgent(final Agent responsibleAgent) {
-		this.responsibleAgent = responsibleAgent;
+		this.agent = responsibleAgent;
 	}
 
 	@Override
@@ -111,12 +111,12 @@ public class Process extends BaseModel {
 
 		final Process process = (Process) o;
 
-		return process.responsibleAgent.equals(responsibleAgent) && process.pid == pid;
+		return process.agent.equals(agent) && process.pid == pid;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(responsibleAgent, pid);
+		return Objects.hash(agent, pid);
 	}
 
 }
