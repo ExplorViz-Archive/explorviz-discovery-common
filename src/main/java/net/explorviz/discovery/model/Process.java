@@ -95,11 +95,11 @@ public class Process extends BaseModel {
 		this.webserverFlag = webserverFlag;
 	}
 
-	public Agent getResponsibleAgent() {
+	public Agent getAgent() {
 		return agent;
 	}
 
-	public void setResponsibleAgent(final Agent responsibleAgent) {
+	public void setAgent(final Agent responsibleAgent) {
 		this.agent = responsibleAgent;
 	}
 
