@@ -2,6 +2,7 @@ package net.explorviz.discovery.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
@@ -51,6 +52,26 @@ public class Agent extends BaseModel {
 	@Override
 	public String toString() {
 		return this.ip + ":" + this.port;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Agent)) {
+			return false;
+		}
+
+		final Agent agent = (Agent) o;
+
+		return agent.ip.equals(ip) && agent.port.equals(port);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ip, port);
 	}
 
 }

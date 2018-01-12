@@ -40,7 +40,7 @@ public class ClientService {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
 						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
-						e);
+						e.getMessage());
 			}
 			return false;
 		}
@@ -67,7 +67,7 @@ public class ClientService {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
 						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
-						e);
+						e.getMessage());
 			}
 			return false;
 		}
