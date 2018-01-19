@@ -1,6 +1,5 @@
 package net.explorviz.discovery.model;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,14 +36,6 @@ public class Process extends BaseModel {
 	public Process(final long newPID, final String newCommand) {
 		this.pid = newPID;
 		this.executionCommand = newCommand;
-	}
-
-	public void kill() throws IOException {
-		// Start respective service (POST to agent)
-	}
-
-	public void start() throws IOException {
-		// Start respective service (POST to agent)
 	}
 
 	public String getShutdownCommand() {
