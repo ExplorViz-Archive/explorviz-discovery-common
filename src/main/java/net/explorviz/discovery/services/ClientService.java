@@ -1,10 +1,10 @@
 package net.explorviz.discovery.services;
 
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -12,9 +12,6 @@ import javax.ws.rs.ext.MessageBodyWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
 
 import net.explorviz.discovery.model.Process;
 
@@ -38,14 +35,13 @@ public class ClientService {
 		return doPost(process, "http://localhost:8082/process");
 	}
 
-	public <T> boolean doPost(final Entity<?> t, final String url) {
+	public <T> boolean doPost(final T t, final String url) {
 		final Client client = this.clientBuilder.build();
-		final WebTarget webTarget = client.target(url);
 
 		Response response;
 
 		try {
-			response = webTarget.request(MEDIA_TYPE).post(t);
+			response = client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
 		} catch (final ProcessingException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
@@ -87,15 +83,13 @@ public class ClientService {
 		return false;
 	}
 
-	public <T> Response doGETRequest(final GenericType<T> t, final String url) {
+	public <T> T doGETRequest(final String url) {
 		final Client client = this.clientBuilder.build();
-		final WebTarget webTarget = client.target(url);
-
-		final Response response = null;
 
 		try {
-			webTarget.request(MEDIA_TYPE).get(t);
-		} catch (UniformInterfaceException | ClientHandlerException e) {
+			return client.target(url).request(MEDIA_TYPE).get(new GenericType<T>() {
+			});
+		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
 						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
@@ -103,13 +97,13 @@ public class ClientService {
 			}
 		}
 
+		return null;
+
 		/*
 		 * if (response.getStatus() != HTTP_STATUS_CREATED) { if
 		 * (LOGGER.isWarnEnabled()) { LOGGER.warn("Failed : HTTP error code: {}",
 		 * response.getStatus()); } return false; }
 		 */
-
-		return response;
 	}
 
 }
