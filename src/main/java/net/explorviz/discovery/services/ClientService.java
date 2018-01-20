@@ -15,14 +15,7 @@ public class ClientService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
 	private static final int HTTP_STATUS_CREATED = 201;
-
-	public boolean postProcessList(final byte[] processListPayload) {
-		return doPost(processListPayload, "http://localhost:8082/process");
-	}
-
-	public boolean postProcess(final byte[] processPayload) {
-		return doPost(processPayload, "http://localhost:8082/process");
-	}
+	private static final String MEDIA_TYPE = "application/vnd.api+json";
 
 	public boolean postProcess(final Process process) {
 		return doPost(process, "http://localhost:8082/process");
@@ -35,19 +28,19 @@ public class ClientService {
 		ClientResponse response;
 
 		try {
-			response = webResource.type("application/vnd.api+json").post(ClientResponse.class, payload);
+			response = webResource.type(MEDIA_TYPE).post(ClientResponse.class, payload);
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
-						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
-						e.toString());
+						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
+						url, e.toString());
 			}
 			return false;
 		}
 
 		if (response.getStatus() != HTTP_STATUS_CREATED) {
 			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn("Failed : HTTP error code : " + response.getStatus());
+				LOGGER.warn("Failed : HTTP error code: {}", response.getStatus());
 			}
 			return false;
 		}
@@ -62,24 +55,49 @@ public class ClientService {
 		ClientResponse response;
 
 		try {
-			response = webResource.type("application/vnd.api+json").post(ClientResponse.class, process);
+			response = webResource.type(MEDIA_TYPE).post(ClientResponse.class, process);
 		} catch (UniformInterfaceException | ClientHandlerException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
-						"Connection to backend failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties.",
-						e.toString());
+						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
+						url, e.toString());
 			}
 			return false;
 		}
 
 		if (response.getStatus() != HTTP_STATUS_CREATED) {
 			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn("Failed : HTTP error code : " + response.getStatus());
+				LOGGER.warn("Failed : HTTP error code: {}", response.getStatus());
 			}
 			return false;
 		}
 
 		return true;
+	}
+
+	public ClientResponse doGETRequest(final String url) {
+		final Client client = Client.create();
+		final WebResource webResource = client.resource(url);
+
+		ClientResponse response = null;
+
+		try {
+			response = webResource.accept(MEDIA_TYPE).get(ClientResponse.class);
+		} catch (UniformInterfaceException | ClientHandlerException e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn(
+						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
+						url, e.toString());
+			}
+		}
+
+		/*
+		 * if (response.getStatus() != HTTP_STATUS_CREATED) { if
+		 * (LOGGER.isWarnEnabled()) { LOGGER.warn("Failed : HTTP error code: {}",
+		 * response.getStatus()); } return false; }
+		 */
+
+		return response;
 	}
 
 }
