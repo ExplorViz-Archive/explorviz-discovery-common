@@ -83,7 +83,7 @@ public class ClientService {
 		return false;
 	}
 
-	public <T> T doGETRequest(final String url) {
+	public <T> T doGETRequest(final T t, final String url) {
 		final Client client = this.clientBuilder.build();
 
 		try {
