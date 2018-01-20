@@ -83,12 +83,12 @@ public class ClientService {
 		return false;
 	}
 
-	public <T> T doGETRequest(final T t, final String url) {
+	public <T> T doGETRequest(final Class<T> type, final String url) {
 		final Client client = this.clientBuilder.build();
 
 		try {
-			return client.target(url).request(MEDIA_TYPE).get(new GenericType<T>() {
-			});
+			final GenericType<T> genericType = new GenericType<>(type);
+			return client.target(url).request(MEDIA_TYPE).get(genericType);
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
