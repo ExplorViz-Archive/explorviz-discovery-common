@@ -93,7 +93,7 @@ public class ClientService {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
 						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
-						url, e.toString());
+						url, e);
 			}
 		}
 
