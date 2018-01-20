@@ -5,7 +5,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
@@ -21,14 +20,14 @@ public class ClientService {
 	private static final int HTTP_STATUS_CREATED = 201;
 	private static final String MEDIA_TYPE = "application/vnd.api+json";
 
-	private ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+	private final ClientBuilder clientBuilder = ClientBuilder.newBuilder();
 
 	public <T> void registerProvider(final MessageBodyReader<T> providerReader) {
-		this.clientBuilder = clientBuilder.register(providerReader);
+		clientBuilder.register(providerReader);
 	}
 
 	public <T> void registerProviderWriter(final MessageBodyWriter<T> providerWriter) {
-		this.clientBuilder = clientBuilder.register(providerWriter);
+		clientBuilder.register(providerWriter);
 	}
 
 	public boolean postProcess(final Process process) {
@@ -83,17 +82,43 @@ public class ClientService {
 		return false;
 	}
 
-	public <T> T doGETRequest(final Class<T> type, final String url) {
+	/*
+	 * public <T> T doGETRequest(final Class<T> type, final String url) { final
+	 * Client client = this.clientBuilder.build();
+	 *
+	 * try { final GenericType<T> genericType = new GenericType<>(type); final
+	 * String r = client.target(url).request(MEDIA_TYPE).get(String.class);
+	 *
+	 * final List<Process> ta = client.target(url).request(MEDIA_TYPE).get(new
+	 * GenericType<List<Process>>() { });
+	 *
+	 * System.out.println(ta); final T t =
+	 * client.target(url).request(MEDIA_TYPE).get(genericType);
+	 * System.out.println(t); return t; } catch (ProcessingException |
+	 * WebApplicationException e) { if (LOGGER.isWarnEnabled()) { LOGGER.warn(
+	 * "Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}"
+	 * , url, e); LOGGER.warn("Stacktrace", e); } }
+	 *
+	 * return null;
+	 *
+	 * /* if (response.getStatus() != HTTP_STATUS_CREATED) { if
+	 * (LOGGER.isWarnEnabled()) { LOGGER.warn("Failed : HTTP error code: {}",
+	 * response.getStatus()); } return false; }
+	 *
+	 * }
+	 */
+
+	public String doGETRequest(final String url) {
 		final Client client = this.clientBuilder.build();
 
 		try {
-			final GenericType<T> genericType = new GenericType<>(type);
-			return client.target(url).request(MEDIA_TYPE).get(genericType);
+			return client.target(url).request(MEDIA_TYPE).get(String.class);
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(
 						"Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}",
 						url, e);
+				LOGGER.warn("Stacktrace", e);
 			}
 		}
 
