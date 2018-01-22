@@ -14,8 +14,17 @@ public class Process extends BaseModel {
 	@JsonProperty("application-name")
 	private String applicationName;
 
-	@JsonProperty("execution-command")
-	private String executionCommand;
+	// executionCommand obtained by agent
+	@JsonProperty("os-execution-command")
+	private String osExecutionCommand;
+
+	// user-defined (in frontend-extension) executionCommand
+	// e.g. extended by javaagent
+	@JsonProperty("user-execution-command")
+	private String userExecutionCommand;
+
+	@JsonProperty("working-directory")
+	private String workingDirectory;
 
 	@JsonProperty("shutdown-command")
 	private String shutdownCommand;
@@ -35,7 +44,7 @@ public class Process extends BaseModel {
 
 	public Process(final long newPID, final String newCommand) {
 		this.pid = newPID;
-		this.executionCommand = newCommand;
+		this.osExecutionCommand = newCommand;
 	}
 
 	public String getShutdownCommand() {
@@ -62,12 +71,20 @@ public class Process extends BaseModel {
 		this.applicationName = applicationName;
 	}
 
-	public String getExecutionCommand() {
-		return executionCommand;
+	public String getOSExecutionCommand() {
+		return osExecutionCommand;
 	}
 
-	public void setExecutionCommand(final String executionCommand) {
-		this.executionCommand = executionCommand;
+	public void setOSExecutionCommand(final String executionCommand) {
+		this.osExecutionCommand = executionCommand;
+	}
+
+	public String getUserExecutionCommand() {
+		return userExecutionCommand;
+	}
+
+	public void setUserExecutionCommand(final String executionCommand) {
+		this.userExecutionCommand = executionCommand;
 	}
 
 	public boolean isMonitoredFlag() {
@@ -94,10 +111,18 @@ public class Process extends BaseModel {
 		this.agent = responsibleAgent;
 	}
 
+	public String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public void setWorkingDirectory(final String workingDirectory) {
+		this.workingDirectory = workingDirectory;
+	}
+
 	@Override
 	public String toString() {
-		return "\n" + this.pid + "\n" + this.executionCommand + "\n" + this.applicationName + "\n" + this.monitoredFlag
-				+ "\n" + this.webserverFlag;
+		return "\n" + this.pid + "\n" + this.osExecutionCommand + "\n" + this.applicationName + "\n"
+				+ this.monitoredFlag + "\n" + this.webserverFlag;
 	}
 
 	@Override
