@@ -123,26 +123,4 @@ public class ClientService {
 
 		return response.readEntity(String.class);
 	}
-
-	public <T> String doPatchRequest(final byte[] payload, final String url) {
-		final Client client = this.clientBuilder.build();
-
-		Response response = null;
-
-		try {
-			response = client.target(url).request(MEDIA_TYPE).post(Entity.text(payload));
-		} catch (final ProcessingException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
-			}
-			return null;
-		}
-
-		if (response.getStatus() != Response.Status.CREATED.getStatusCode() && LOGGER.isWarnEnabled()) {
-			LOGGER.warn("Failed : HTTP error code: {}", response.getStatus());
-		}
-
-		return response.readEntity(String.class);
-	}
-
 }
