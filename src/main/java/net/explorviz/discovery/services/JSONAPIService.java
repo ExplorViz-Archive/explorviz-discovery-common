@@ -2,8 +2,6 @@ package net.explorviz.discovery.services;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,30 +9,37 @@ import com.github.jasminb.jsonapi.JSONAPIDocument;
 import com.github.jasminb.jsonapi.ResourceConverter;
 import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
 
+import net.explorviz.discovery.factories.ResourceConverterFactory;
+
 // This class contains logic for manual parsing of data to JSONAPI payload
-// This is necessary for the ClientService, since Providers can not be used automatically
-public class JSONAPIService {
+// This is necessary for the ClientService, since Jersey / HK2 sometimes injects the
+// wrong provider (backend)
+public final class JSONAPIService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JSONAPIService.class);
 
-	private final ResourceConverter converter;
+	private static final ResourceConverter CONVERTER;
 
-	@Inject
-	public JSONAPIService(final ResourceConverter converter) {
-		this.converter = converter;
+	static {
+		CONVERTER = new ResourceConverterFactory().provide();
 	}
 
-	private JSONAPIDocument<List<?>> objectsToJSONAPIDoc(final List<?> list) {
+	private JSONAPIService() {
+		// do not instantiate, since util class
+
+	}
+
+	private static JSONAPIDocument<List<?>> objectsToJSONAPIDoc(final List<?> list) {
 		return new JSONAPIDocument<>(list);
 	}
 
-	private <T> JSONAPIDocument<?> objectToJSONAPIDoc(final T p) {
+	private static <T> JSONAPIDocument<?> objectToJSONAPIDoc(final T p) {
 		return new JSONAPIDocument<>(p);
 	}
 
-	private byte[] apiDocumentListToByte(final JSONAPIDocument<List<?>> apiDocument) {
+	private static byte[] apiDocumentListToByte(final JSONAPIDocument<List<?>> apiDocument) {
 		try {
-			return this.converter.writeDocumentCollection(apiDocument);
+			return CONVERTER.writeDocumentCollection(apiDocument);
 		} catch (final DocumentSerializationException e) {
 			LOGGER.error("Error when parsing list to byte: ", e);
 			// TODO return error infos
@@ -43,9 +48,9 @@ public class JSONAPIService {
 		}
 	}
 
-	private byte[] apiDocumentToByte(final JSONAPIDocument<?> apiDocument) {
+	private static byte[] apiDocumentToByte(final JSONAPIDocument<?> apiDocument) {
 		try {
-			return this.converter.writeDocument(apiDocument);
+			return CONVERTER.writeDocument(apiDocument);
 		} catch (final DocumentSerializationException e) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("Error when parsing object to byte: " + e);
@@ -56,12 +61,22 @@ public class JSONAPIService {
 		}
 	}
 
-	public byte[] listToByteArray(final List<?> list) {
+	public static byte[] listToByteArray(final List<?> list) {
 		return apiDocumentListToByte(objectsToJSONAPIDoc(list));
 	}
 
-	public <T> byte[] objectToByteArray(final T t) {
+	public static <T> byte[] objectToByteArray(final T t) {
 		return apiDocumentToByte(objectToJSONAPIDoc(t));
+	}
+
+	public static List<?> byteArrayToList(final String typeName, final byte[] jsonPayload) {
+		final Class<?> type = TypeService.typeMap.get(typeName);
+		return CONVERTER.readDocumentCollection(jsonPayload, type).get();
+	}
+
+	public static Object byteArrayToObject(final String typeName, final byte[] jsonPayload) {
+		final Class<?> type = TypeService.typeMap.get(typeName);
+		return CONVERTER.readDocument(jsonPayload, type).get();
 	}
 
 }
