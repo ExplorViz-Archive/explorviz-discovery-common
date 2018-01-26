@@ -1,7 +1,5 @@
 package net.explorviz.discovery.model;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.github.jasminb.jsonapi.LongIdHandler;
@@ -14,17 +12,11 @@ import com.github.jasminb.jsonapi.annotations.Type;
 @Type("base-model")
 public class BaseModel {
 
-	private static final AtomicLong ID_GENERATOR = new AtomicLong();
-
 	@Id(LongIdHandler.class)
 	private Long id;
 
 	@Relationship(value = "error-object")
 	private ErrorObject errorObject;
-
-	public BaseModel() {
-		id = ID_GENERATOR.incrementAndGet();
-	}
 
 	public long getId() {
 		return id;

@@ -1,10 +1,13 @@
 package net.explorviz.discovery.services;
 
+import java.util.Map;
+
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -84,13 +87,24 @@ public class ClientService {
 		return true;
 	}
 
-	public <T> T doGETRequest(final Class<T> type, final String url) {
+	public <T> T doGETRequest(final Class<T> type, final String url, final Map<String, Object> queryParameter) {
 		final Client client = this.clientBuilder.build();
 
 		try {
 			final GenericType<T> genericType = new GenericType<>(type);
 
-			return client.target(url).request(MEDIA_TYPE).get(genericType);
+			if (queryParameter == null) {
+				return client.target(url).request(MEDIA_TYPE).get(genericType);
+			} else {
+
+				WebTarget target = client.target(url);
+
+				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
+				}
+
+				return target.request(MEDIA_TYPE).get(genericType);
+			}
 
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
@@ -100,6 +114,36 @@ public class ClientService {
 		}
 
 		return null;
+	}
+
+	public String doGETRequest(final String url, final Map<String, Object> queryParameter) {
+		final Client client = this.clientBuilder.build();
+
+		Response response;
+
+		try {
+			if (queryParameter == null) {
+				response = client.target(url).request(MEDIA_TYPE).get();
+			} else {
+
+				WebTarget target = client.target(url);
+
+				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
+				}
+
+				response = target.request(MEDIA_TYPE).get();
+			}
+
+		} catch (ProcessingException | WebApplicationException e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn(LOGGER_MESSAGE, url, e);
+				LOGGER.warn("Stacktrace", e);
+			}
+			return null;
+		}
+
+		return response.readEntity(String.class);
 	}
 
 	public String doGETRequest(final String url) {

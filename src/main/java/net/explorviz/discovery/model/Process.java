@@ -35,6 +35,9 @@ public class Process extends BaseModel {
 	@JsonProperty("webserver-flag")
 	private boolean webserverFlag;
 
+	@JsonProperty("is-stopped")
+	private boolean isStopped = false;
+
 	@Relationship(value = "agent")
 	private Agent agent;
 
@@ -117,6 +120,14 @@ public class Process extends BaseModel {
 
 	public void setWorkingDirectory(final String workingDirectory) {
 		this.workingDirectory = workingDirectory;
+	}
+
+	public void setStopped(final boolean isStopped) {
+		this.isStopped = isStopped;
+	}
+
+	public void setIsStopped(final boolean isStopped) {
+		this.isStopped = isStopped;
 	}
 
 	@Override
