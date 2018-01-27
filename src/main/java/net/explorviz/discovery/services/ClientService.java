@@ -13,10 +13,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.explorviz.discovery.model.Process;
 
 public class ClientService {
 
@@ -35,56 +34,17 @@ public class ClientService {
 		clientBuilder.register(providerWriter);
 	}
 
-	public boolean postProcess(final Process process) {
-		return doPost(process, "http://localhost:8082/process");
-	}
-
-	public <T> boolean doPost(final T t, final String url) {
+	public <T> Response doPost(final T t, final String url) {
 		final Client client = this.clientBuilder.build();
 
-		Response response;
-
 		try {
-			response = client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
+			return client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
 		} catch (final ProcessingException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
 			}
-			return false;
+			return null;
 		}
-
-		if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn("Failed : HTTP error code: {}", response.getStatus());
-			}
-			return false;
-		}
-
-		return true;
-	}
-
-	public <T> boolean doPost(final String payload, final String url) {
-		final Client client = this.clientBuilder.build();
-
-		Response response;
-
-		try {
-			response = client.target(url).request(MEDIA_TYPE).post(Entity.text(payload));
-		} catch (final ProcessingException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
-			}
-			return false;
-		}
-
-		if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn("Failed : HTTP error code: {}", response.getStatus());
-			}
-			return false;
-		}
-
-		return true;
 	}
 
 	public <T> T doGETRequest(final Class<T> type, final String url, final Map<String, Object> queryParameter) {
@@ -167,4 +127,10 @@ public class ClientService {
 
 		return response.readEntity(String.class);
 	}
+
+	public <T> Response doPatch(final T t, final String url) {
+		return this.clientBuilder.build().target(url).request(MEDIA_TYPE).build("PATCH", Entity.entity(t, MEDIA_TYPE))
+				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+	}
+
 }

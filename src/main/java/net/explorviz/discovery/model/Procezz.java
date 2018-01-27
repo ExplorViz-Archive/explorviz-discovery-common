@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 
-@Type("process")
-public class Process extends BaseModel {
+@Type("procezz")
+public class Procezz extends BaseModel {
 
 	private long pid;
 
@@ -41,11 +41,11 @@ public class Process extends BaseModel {
 	@Relationship(value = "agent")
 	private Agent agent;
 
-	public Process() {
+	public Procezz() {
 		// For JSON deserialization
 	}
 
-	public Process(final long newPID, final String newCommand) {
+	public Procezz(final long newPID, final String newCommand) {
 		this.pid = newPID;
 		this.osExecutionCommand = newCommand;
 	}
@@ -55,7 +55,9 @@ public class Process extends BaseModel {
 	}
 
 	public void setShutdownCommand(final String shutdownCommand) {
-		this.shutdownCommand = shutdownCommand;
+		if (shutdownCommand != null && shutdownCommand.length() > 0) {
+			this.shutdownCommand = shutdownCommand;
+		}
 	}
 
 	public long getPid() {
@@ -71,7 +73,9 @@ public class Process extends BaseModel {
 	}
 
 	public void setApplicationName(final String applicationName) {
-		this.applicationName = applicationName;
+		if (applicationName != null && applicationName.length() > 0) {
+			this.applicationName = applicationName;
+		}
 	}
 
 	public String getOSExecutionCommand() {
@@ -142,11 +146,11 @@ public class Process extends BaseModel {
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof Process)) {
+		if (!(o instanceof Procezz)) {
 			return false;
 		}
 
-		final Process process = (Process) o;
+		final Procezz process = (Procezz) o;
 
 		return process.agent.equals(agent) && process.pid == pid;
 	}
