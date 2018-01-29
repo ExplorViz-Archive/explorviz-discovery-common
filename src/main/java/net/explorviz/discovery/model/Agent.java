@@ -74,4 +74,15 @@ public class Agent extends BaseModel {
 		return Objects.hash(ip, port);
 	}
 
+	public void updateProcezz(final Procezz newProcezz) {
+		final Procezz oldProcezz = this.procezzes.stream().filter(Objects::nonNull)
+				.filter(p -> p.getId() == newProcezz.getId()).findFirst().orElse(null);
+
+		if (oldProcezz != null) {
+			System.out.println("set");
+			final int index = this.procezzes.indexOf(oldProcezz);
+			this.procezzes.set(index, newProcezz);
+		}
+	}
+
 }
