@@ -1,5 +1,6 @@
 package net.explorviz.discovery.services;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.ProcessingException;
@@ -17,6 +18,8 @@ import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.explorviz.discovery.model.Procezz;
+
 public class ClientService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
@@ -26,7 +29,7 @@ public class ClientService {
 
 	private final ClientBuilder clientBuilder = ClientBuilder.newBuilder();
 
-	public <T> void registerProvider(final MessageBodyReader<T> providerReader) {
+	public <T> void registerProviderReader(final MessageBodyReader<T> providerReader) {
 		clientBuilder.register(providerReader);
 	}
 
@@ -34,11 +37,24 @@ public class ClientService {
 		clientBuilder.register(providerWriter);
 	}
 
-	public <T> Response doPost(final T t, final String url) {
+	public <T> Response doPOSTRequest(final T t, final String url) {
 		final Client client = this.clientBuilder.build();
 
 		try {
 			return client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
+		} catch (final ProcessingException e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
+			}
+			return null;
+		}
+	}
+
+	public <T> Response doPOSTProcessListRequest(final List<Procezz> procezzList, final String url) {
+		final Client client = this.clientBuilder.build();
+
+		try {
+			return client.target(url).request(MEDIA_TYPE).post(Entity.entity(procezzList, MEDIA_TYPE));
 		} catch (final ProcessingException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
@@ -69,7 +85,6 @@ public class ClientService {
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(LOGGER_MESSAGE, url, e);
-				LOGGER.warn("Stacktrace", e);
 			}
 		}
 
@@ -98,7 +113,6 @@ public class ClientService {
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(LOGGER_MESSAGE, url, e);
-				LOGGER.warn("Stacktrace", e);
 			}
 			return null;
 		}
@@ -116,7 +130,6 @@ public class ClientService {
 		} catch (ProcessingException | WebApplicationException e) {
 			if (LOGGER.isWarnEnabled()) {
 				LOGGER.warn(LOGGER_MESSAGE, url, e);
-				LOGGER.warn("Stacktrace", e);
 			}
 			return null;
 		}
@@ -126,6 +139,36 @@ public class ClientService {
 		}
 
 		return response.readEntity(String.class);
+	}
+
+	public <T> List<Procezz> doGETProcezzListRequest(final String url, final Map<String, Object> queryParameter) {
+		final Client client = this.clientBuilder.build();
+
+		try {
+
+			final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
+			};
+
+			if (queryParameter == null) {
+				return client.target(url).request(MEDIA_TYPE).get(genericType);
+			} else {
+
+				WebTarget target = client.target(url);
+
+				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
+				}
+
+				return target.request(MEDIA_TYPE).get(genericType);
+			}
+
+		} catch (ProcessingException | WebApplicationException e) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn(LOGGER_MESSAGE, url, e);
+			}
+		}
+
+		return null;
 	}
 
 	public <T> Response doPatch(final T t, final String url) {

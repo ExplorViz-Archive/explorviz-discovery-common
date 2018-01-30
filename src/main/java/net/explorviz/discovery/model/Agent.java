@@ -79,7 +79,6 @@ public class Agent extends BaseModel {
 				.filter(p -> p.getId() == newProcezz.getId()).findFirst().orElse(null);
 
 		if (oldProcezz != null) {
-			System.out.println("set");
 			final int index = this.procezzes.indexOf(oldProcezz);
 			this.procezzes.set(index, newProcezz);
 		}
