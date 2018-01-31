@@ -23,6 +23,10 @@ public class Procezz extends BaseModel {
 	@JsonProperty("user-execution-command")
 	private String userExecutionCommand;
 
+	// execution command used by agent to restart
+	@JsonProperty("agent-execution-command")
+	private String agentExecutionCommand;
+
 	@JsonProperty("working-directory")
 	private String workingDirectory;
 
@@ -132,6 +136,14 @@ public class Procezz extends BaseModel {
 
 	public void setIsStopped(final boolean isStopped) {
 		this.isStopped = isStopped;
+	}
+
+	public String getAgentExecutionCommand() {
+		return agentExecutionCommand;
+	}
+
+	public void setAgentExecutionCommand(final String agentExecutionCommand) {
+		this.agentExecutionCommand = agentExecutionCommand;
 	}
 
 	@Override
