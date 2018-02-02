@@ -39,8 +39,14 @@ public class Procezz extends BaseModel {
 	@JsonProperty("webserver-flag")
 	private boolean webserverFlag;
 
-	@JsonProperty("is-stopped")
-	private boolean isStopped = false;
+	@JsonProperty("stopped")
+	private boolean stopped;
+
+	@JsonProperty("aop-content")
+	private String aopContent;
+
+	@JsonProperty("kieker-config-content")
+	private String kiekerConfigContent;
 
 	@Relationship(value = "agent")
 	private Agent agent;
@@ -130,12 +136,12 @@ public class Procezz extends BaseModel {
 		this.workingDirectory = workingDirectory;
 	}
 
-	public void setStopped(final boolean isStopped) {
-		this.isStopped = isStopped;
+	public boolean isStopped() {
+		return this.stopped;
 	}
 
-	public void setIsStopped(final boolean isStopped) {
-		this.isStopped = isStopped;
+	public void setStopped(final boolean stopped) {
+		this.stopped = stopped;
 	}
 
 	public String getAgentExecutionCommand() {
@@ -144,6 +150,22 @@ public class Procezz extends BaseModel {
 
 	public void setAgentExecutionCommand(final String agentExecutionCommand) {
 		this.agentExecutionCommand = agentExecutionCommand;
+	}
+
+	public String getAopContent() {
+		return aopContent;
+	}
+
+	public void setAopContent(final String aopContent) {
+		this.aopContent = aopContent;
+	}
+
+	public String getKiekerConfigContent() {
+		return kiekerConfigContent;
+	}
+
+	public void setKiekerConfigContent(final String kiekerConfigContent) {
+		this.kiekerConfigContent = kiekerConfigContent;
 	}
 
 	@Override
