@@ -27,6 +27,11 @@ public class Procezz extends BaseModel {
 	@JsonProperty("agent-execution-command")
 	private String agentExecutionCommand;
 
+	// execution command proposed by agent (and its discovery strategies) to restart
+	// see discoverystrategies
+	@JsonProperty("proposed-execution-command")
+	private String proposedExecutionCommand;
+
 	@JsonProperty("working-directory")
 	private String workingDirectory;
 
@@ -150,6 +155,14 @@ public class Procezz extends BaseModel {
 
 	public void setAgentExecutionCommand(final String agentExecutionCommand) {
 		this.agentExecutionCommand = agentExecutionCommand;
+	}
+
+	public String getProposedExecutionCommand() {
+		return proposedExecutionCommand;
+	}
+
+	public void setProposedExecutionCommand(final String proposedExecutionCommand) {
+		this.proposedExecutionCommand = proposedExecutionCommand;
 	}
 
 	public String getAopContent() {
