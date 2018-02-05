@@ -1,6 +1,7 @@
 package net.explorviz.discovery.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.github.jasminb.jsonapi.LongIdHandler;
 import com.github.jasminb.jsonapi.annotations.Id;
@@ -12,6 +13,12 @@ import com.github.jasminb.jsonapi.annotations.Type;
 @Type("base-model")
 public class BaseModel {
 
+	@JsonProperty("name")
+	protected String name;
+
+	@JsonProperty("last-discovery-time")
+	protected long lastDiscoveryTime;
+
 	@Id(LongIdHandler.class)
 	private Long id;
 
@@ -22,7 +29,7 @@ public class BaseModel {
 		return id;
 	}
 
-	public void setId(final long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -32,6 +39,22 @@ public class BaseModel {
 
 	public void setErrorObject(final ErrorObject errorObject) {
 		this.errorObject = errorObject;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public long getLastDiscoveryTime() {
+		return lastDiscoveryTime;
+	}
+
+	public void setLastDiscoveryTime(final long lastDiscoveryTime) {
+		this.lastDiscoveryTime = lastDiscoveryTime;
 	}
 
 }

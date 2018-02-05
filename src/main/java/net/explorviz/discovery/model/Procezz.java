@@ -11,9 +11,6 @@ public class Procezz extends BaseModel {
 
 	private long pid;
 
-	@JsonProperty("application-name")
-	private String applicationName;
-
 	// executionCommand obtained by agent
 	@JsonProperty("os-execution-command")
 	private String osExecutionCommand;
@@ -81,16 +78,6 @@ public class Procezz extends BaseModel {
 
 	public void setPid(final long pid) {
 		this.pid = pid;
-	}
-
-	public String getApplicationName() {
-		return applicationName;
-	}
-
-	public void setApplicationName(final String applicationName) {
-		if (applicationName != null && applicationName.length() > 0) {
-			this.applicationName = applicationName;
-		}
 	}
 
 	public String getOSExecutionCommand() {
@@ -183,8 +170,8 @@ public class Procezz extends BaseModel {
 
 	@Override
 	public String toString() {
-		return "\n" + this.pid + "\n" + this.osExecutionCommand + "\n" + this.applicationName + "\n"
-				+ this.monitoredFlag + "\n" + this.webserverFlag;
+		return "\n" + this.pid + "\n" + this.osExecutionCommand + "\n" + this.name + "\n" + this.monitoredFlag + "\n"
+				+ this.webserverFlag;
 	}
 
 	@Override
