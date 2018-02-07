@@ -19,11 +19,22 @@ public class BaseModel {
 	@JsonProperty("last-discovery-time")
 	protected long lastDiscoveryTime;
 
+	@JsonProperty("is-hidden")
+	protected boolean hidden;
+
 	@Id(LongIdHandler.class)
 	private Long id;
 
 	@Relationship(value = "error-object")
 	private ErrorObject errorObject;
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(final boolean hidden) {
+		this.hidden = hidden;
+	}
 
 	public long getId() {
 		return id;
