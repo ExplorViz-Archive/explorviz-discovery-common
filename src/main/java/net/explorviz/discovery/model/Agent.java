@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 
@@ -47,6 +48,15 @@ public class Agent extends BaseModel {
 
 	public void setProcezzes(final List<Procezz> processes) {
 		this.procezzes = processes;
+	}
+
+	@JsonIgnore
+	public String getIPPortOrName() {
+		if (this.name == null || this.name.isEmpty()) {
+			return this.ip + ":" + this.port;
+		} else {
+			return this.name;
+		}
 	}
 
 	@Override
