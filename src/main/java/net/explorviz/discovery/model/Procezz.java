@@ -2,6 +2,7 @@ package net.explorviz.discovery.model;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
@@ -50,6 +51,9 @@ public class Procezz extends BaseModel {
 	@JsonProperty("kieker-config-content")
 	private String kiekerConfigContent;
 
+	@JsonIgnore
+	private String procezzManagementType;
+
 	@Relationship(value = "agent")
 	private Agent agent;
 
@@ -80,12 +84,20 @@ public class Procezz extends BaseModel {
 		this.pid = pid;
 	}
 
-	public String getOSExecutionCommand() {
+	public String getProcezzManagementType() {
+		return procezzManagementType;
+	}
+
+	public void setProcezzManagementType(final String procezzManagementType) {
+		this.procezzManagementType = procezzManagementType;
+	}
+
+	public String getOsExecutionCommand() {
 		return osExecutionCommand;
 	}
 
-	public void setOSExecutionCommand(final String executionCommand) {
-		this.osExecutionCommand = executionCommand;
+	public void setOsExecutionCommand(final String osExecutionCommand) {
+		this.osExecutionCommand = osExecutionCommand;
 	}
 
 	public String getUserExecutionCommand() {
@@ -186,12 +198,13 @@ public class Procezz extends BaseModel {
 
 		final Procezz process = (Procezz) o;
 
-		return process.agent.equals(agent) && process.pid == pid;
+		return process.agent.equals(agent) && process.pid == pid
+				&& process.osExecutionCommand.equals(osExecutionCommand);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(agent, pid);
+		return Objects.hash(agent, pid, osExecutionCommand);
 	}
 
 }

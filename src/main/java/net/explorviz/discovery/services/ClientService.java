@@ -37,17 +37,9 @@ public class ClientService {
 		clientBuilder.register(providerWriter);
 	}
 
-	public <T> Response doPOSTRequest(final T t, final String url) {
+	public <T> Response doPOSTRequest(final T t, final String url) throws ProcessingException {
 		final Client client = this.clientBuilder.build();
-
-		try {
-			return client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
-		} catch (final ProcessingException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
-			}
-			return null;
-		}
+		return client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
 	}
 
 	public <T> Response doPOSTProcessListRequest(final List<Procezz> procezzList, final String url) {
@@ -63,32 +55,25 @@ public class ClientService {
 		}
 	}
 
-	public <T> T doGETRequest(final Class<T> type, final String url, final Map<String, Object> queryParameter) {
+	public <T> T doGETRequest(final Class<T> type, final String url, final Map<String, Object> queryParameter)
+			throws ProcessingException, WebApplicationException {
 		final Client client = this.clientBuilder.build();
 
-		try {
-			final GenericType<T> genericType = new GenericType<>(type);
+		final GenericType<T> genericType = new GenericType<>(type);
 
-			if (queryParameter == null) {
-				return client.target(url).request(MEDIA_TYPE).get(genericType);
-			} else {
+		if (queryParameter == null) {
+			return client.target(url).request(MEDIA_TYPE).get(genericType);
+		} else {
 
-				WebTarget target = client.target(url);
+			WebTarget target = client.target(url);
 
-				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
-					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
-				}
-
-				return target.request(MEDIA_TYPE).get(genericType);
+			for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+				target = target.queryParam(queryParam.getKey(), queryParam.getValue());
 			}
 
-		} catch (ProcessingException | WebApplicationException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e);
-			}
+			return target.request(MEDIA_TYPE).get(genericType);
 		}
 
-		return null;
 	}
 
 	public String doGETRequest(final String url, final Map<String, Object> queryParameter) {
@@ -141,34 +126,25 @@ public class ClientService {
 		return response.readEntity(String.class);
 	}
 
-	public <T> List<Procezz> doGETProcezzListRequest(final String url, final Map<String, Object> queryParameter) {
+	public <T> List<Procezz> doGETProcezzListRequest(final String url, final Map<String, Object> queryParameter)
+			throws ProcessingException, WebApplicationException {
 		final Client client = this.clientBuilder.build();
 
-		try {
+		final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
+		};
 
-			final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
-			};
+		if (queryParameter == null) {
+			return client.target(url).request(MEDIA_TYPE).get(genericType);
+		} else {
 
-			if (queryParameter == null) {
-				return client.target(url).request(MEDIA_TYPE).get(genericType);
-			} else {
+			WebTarget target = client.target(url);
 
-				WebTarget target = client.target(url);
-
-				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
-					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
-				}
-
-				return target.request(MEDIA_TYPE).get(genericType);
+			for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+				target = target.queryParam(queryParam.getKey(), queryParam.getValue());
 			}
 
-		} catch (ProcessingException | WebApplicationException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e);
-			}
+			return target.request(MEDIA_TYPE).get(genericType);
 		}
-
-		return null;
 	}
 
 	public <T> Response doPatch(final T t, final String url) {
