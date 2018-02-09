@@ -147,7 +147,7 @@ public class ClientService {
 		}
 	}
 
-	public <T> Response doPatch(final T t, final String url) {
+	public <T> Response doPatch(final T t, final String url) throws ProcessingException {
 		return this.clientBuilder.build().target(url).request(MEDIA_TYPE).build("PATCH", Entity.entity(t, MEDIA_TYPE))
 				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
 	}
