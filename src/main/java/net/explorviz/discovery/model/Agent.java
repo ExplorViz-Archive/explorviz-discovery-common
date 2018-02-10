@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jasminb.jsonapi.annotations.Relationship;
 import com.github.jasminb.jsonapi.annotations.Type;
 
 @Type("agent")
 public class Agent extends BaseModel {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Agent.class);
 
 	private String ip;
 	private String port;
@@ -89,8 +94,13 @@ public class Agent extends BaseModel {
 				.filter(p -> p.getId() == newProcezz.getId()).findFirst().orElse(null);
 
 		if (oldProcezz != null) {
+
+			LOGGER.info("Updating single procezz for Agent. OldPID:{}, NewPID:{}", oldProcezz.getPid(),
+					newProcezz.getPid());
 			final int index = this.procezzes.indexOf(oldProcezz);
 			this.procezzes.set(index, newProcezz);
+			newProcezz.setAgent(this);
+
 		}
 	}
 
