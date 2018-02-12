@@ -66,7 +66,7 @@ public class Agent extends BaseModel {
 
 	@Override
 	public String toString() {
-		return this.ip + ":" + this.port;
+		return this.id + this.ip + ":" + this.port;
 	}
 
 	@Override

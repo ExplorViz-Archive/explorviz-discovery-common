@@ -18,6 +18,7 @@ import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.explorviz.discovery.model.Agent;
 import net.explorviz.discovery.model.Procezz;
 
 public class ClientService {
@@ -131,6 +132,27 @@ public class ClientService {
 		final Client client = this.clientBuilder.build();
 
 		final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
+		};
+
+		if (queryParameter == null) {
+			return client.target(url).request(MEDIA_TYPE).get(genericType);
+		} else {
+
+			WebTarget target = client.target(url);
+
+			for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
+				target = target.queryParam(queryParam.getKey(), queryParam.getValue());
+			}
+
+			return target.request(MEDIA_TYPE).get(genericType);
+		}
+	}
+
+	public <T> List<Agent> doGETPAgentListRequest(final String url, final Map<String, Object> queryParameter)
+			throws ProcessingException, WebApplicationException {
+		final Client client = this.clientBuilder.build();
+
+		final GenericType<List<Agent>> genericType = new GenericType<List<Agent>>() {
 		};
 
 		if (queryParameter == null) {

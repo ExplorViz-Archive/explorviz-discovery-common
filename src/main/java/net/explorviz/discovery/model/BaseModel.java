@@ -28,7 +28,7 @@ public class BaseModel {
 	protected String errorMessage;
 
 	@Id(LongIdHandler.class)
-	private Long id;
+	protected Long id;
 
 	public boolean isHidden() {
 		return hidden;
