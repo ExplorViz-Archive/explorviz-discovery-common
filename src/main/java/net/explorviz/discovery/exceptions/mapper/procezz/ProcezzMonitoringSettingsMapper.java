@@ -21,25 +21,13 @@ public class ProcezzMonitoringSettingsMapper implements ExceptionMapper<ProcezzM
 
 		if (exception.getFaultyProcezz() != null) {
 			exception.getFaultyProcezz().setErrorOccured(true);
-			exception.getFaultyProcezz().setErrorMessage(exception.toString());
+			exception.getFaultyProcezz().setErrorMessage(exception.getMessage());
 		}
 
-		final byte[] serializedErrorArray = ErrorObjectHelper.getInstance().createSerializedErrorArray(
+		final byte[] errorObject = ErrorObjectHelper.getInstance().createSerializedErrorArray(
 				ResponseUtil.HTTP_STATUS_UNPROCESSABLE_ENTITY, ResponseUtil.ERROR_INTERNAL_AGENT,
 				exception.getMessage());
-
-		// final Error error = new Error();
-		// error.setCode("422");
-		// error.setTitle(ResponseUtil.ERROR_INTERNAL_TITLE);
-		// error.setDetail(exception.toString());
-
-		// final String errorObject =
-		// ErrorObjectHelper.getInstance().createErrorObjectString(422,
-		// ResponseUtil.ERROR_INTERNAL_TITLE, exception.toString());
-
-		// final String test = "{\"errors\":[{\"code\":\"422\"}]}";
-
-		return Response.status(422).entity(serializedErrorArray).build();
+		return Response.status(422).entity(errorObject).build();
 	}
 
 }

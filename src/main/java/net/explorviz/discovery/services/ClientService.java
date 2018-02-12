@@ -14,10 +14,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.explorviz.discovery.exceptions.agent.AgentInternalErrorException;
+import net.explorviz.discovery.exceptions.agent.AgentNoConnectionException;
+import net.explorviz.discovery.exceptions.mapper.ResponseUtil;
 import net.explorviz.discovery.model.Agent;
 import net.explorviz.discovery.model.Procezz;
 
@@ -36,24 +40,6 @@ public class ClientService {
 
 	public <T> void registerProviderWriter(final MessageBodyWriter<T> providerWriter) {
 		clientBuilder.register(providerWriter);
-	}
-
-	public <T> Response doPOSTRequest(final T t, final String url) throws ProcessingException {
-		final Client client = this.clientBuilder.build();
-		return client.target(url).request(MEDIA_TYPE).post(Entity.entity(t, MEDIA_TYPE));
-	}
-
-	public <T> Response doPOSTProcessListRequest(final List<Procezz> procezzList, final String url) {
-		final Client client = this.clientBuilder.build();
-
-		try {
-			return client.target(url).request(MEDIA_TYPE).post(Entity.entity(procezzList, MEDIA_TYPE));
-		} catch (final ProcessingException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e.toString());
-			}
-			return null;
-		}
 	}
 
 	public <T> T doGETRequest(final Class<T> type, final String url, final Map<String, Object> queryParameter)
@@ -169,9 +155,39 @@ public class ClientService {
 		}
 	}
 
+	public Agent doAgentPatchRequest(final Agent updatedAgent, final String url)
+			throws AgentInternalErrorException, AgentNoConnectionException {
+
+		final Client client = buildClient();
+
+		try {
+			final Response agentResponse = client.target(url).request(MEDIA_TYPE)
+					.build("PATCH", Entity.entity(updatedAgent, MEDIA_TYPE))
+					.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+
+			if (agentResponse.getStatus() == Response.Status.OK.getStatusCode()) {
+				return agentResponse.readEntity(Agent.class);
+			} else {
+				final String errorResponse = agentResponse.readEntity(String.class);
+				throw new AgentInternalErrorException(errorResponse, new Exception());
+			}
+
+		} catch (final ProcessingException e) {
+			throw new AgentNoConnectionException(ResponseUtil.ERROR_NO_AGENT_CONNECTION_TIMEOUT, e);
+		}
+	}
+
+	// TODO aufbauen wie AgentPatch
 	public <T> Response doPatch(final T t, final String url) throws ProcessingException {
 		return this.clientBuilder.build().target(url).request(MEDIA_TYPE).build("PATCH", Entity.entity(t, MEDIA_TYPE))
 				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+	}
+
+	private Client buildClient() {
+		final Client client = this.clientBuilder.build();
+		client.property(ClientProperties.CONNECT_TIMEOUT, 4000);
+		client.property(ClientProperties.READ_TIMEOUT, 4000);
+		return client;
 	}
 
 }
