@@ -25,7 +25,7 @@ public class BaseModel {
 	protected boolean errorOccured;
 
 	@JsonProperty("error-message")
-	protected String errorMessage;
+	protected String errorMessage = "";
 
 	@Id(LongIdHandler.class)
 	protected Long id;

@@ -19,6 +19,11 @@ public class ProcezzStopMapper implements ExceptionMapper<ProcezzStopException> 
 
 		LOGGER.error("Error occured while patching procezz. Error: {}", exception.getMessage());
 
+		if (exception.getFaultyProcezz() != null) {
+			exception.getFaultyProcezz().setErrorOccured(true);
+			exception.getFaultyProcezz().setErrorMessage(exception.getMessage());
+		}
+
 		final byte[] errorObject = ErrorObjectHelper.getInstance().createSerializedErrorArray(
 				ResponseUtil.HTTP_STATUS_UNPROCESSABLE_ENTITY, ResponseUtil.ERROR_INTERNAL_AGENT,
 				exception.getMessage());
