@@ -19,9 +19,11 @@ import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.explorviz.discovery.exceptions.GenericNoConnectionException;
 import net.explorviz.discovery.exceptions.agent.AgentInternalErrorException;
 import net.explorviz.discovery.exceptions.agent.AgentNoConnectionException;
 import net.explorviz.discovery.exceptions.mapper.ResponseUtil;
+import net.explorviz.discovery.exceptions.procezz.ProcezzGenericException;
 import net.explorviz.discovery.model.Agent;
 import net.explorviz.discovery.model.Procezz;
 
@@ -30,7 +32,7 @@ public class ClientService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
 	private static final String MEDIA_TYPE = "application/vnd.api+json";
 
-	private static final String LOGGER_MESSAGE = "Connection to {} failed, probably not online or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}";
+	private static final String LOGGER_MESSAGE = "Connection to {} failed, probably offline or wrong IP. Check IP in WEB-INF/classes/explorviz.properties. Error Message: {}";
 
 	private final ClientBuilder clientBuilder = ClientBuilder.newBuilder();
 
@@ -63,98 +65,6 @@ public class ClientService {
 
 	}
 
-	public String doGETRequest(final String url, final Map<String, Object> queryParameter) {
-		final Client client = this.clientBuilder.build();
-
-		Response response;
-
-		try {
-			if (queryParameter == null) {
-				response = client.target(url).request(MEDIA_TYPE).get();
-			} else {
-
-				WebTarget target = client.target(url);
-
-				for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
-					target = target.queryParam(queryParam.getKey(), queryParam.getValue());
-				}
-
-				response = target.request(MEDIA_TYPE).get();
-			}
-
-		} catch (ProcessingException | WebApplicationException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e);
-			}
-			return null;
-		}
-
-		return response.readEntity(String.class);
-	}
-
-	public String doGETRequest(final String url) {
-		final Client client = this.clientBuilder.build();
-
-		Response response = null;
-
-		try {
-			response = client.target(url).request(MEDIA_TYPE).get();
-		} catch (ProcessingException | WebApplicationException e) {
-			if (LOGGER.isWarnEnabled()) {
-				LOGGER.warn(LOGGER_MESSAGE, url, e);
-			}
-			return null;
-		}
-
-		if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-			LOGGER.warn("GET Request failed: {}", response.getStatusInfo());
-		}
-
-		return response.readEntity(String.class);
-	}
-
-	public <T> List<Procezz> doGETProcezzListRequest(final String url, final Map<String, Object> queryParameter)
-			throws ProcessingException, WebApplicationException {
-		final Client client = this.clientBuilder.build();
-
-		final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
-		};
-
-		if (queryParameter == null) {
-			return client.target(url).request(MEDIA_TYPE).get(genericType);
-		} else {
-
-			WebTarget target = client.target(url);
-
-			for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
-				target = target.queryParam(queryParam.getKey(), queryParam.getValue());
-			}
-
-			return target.request(MEDIA_TYPE).get(genericType);
-		}
-	}
-
-	public <T> List<Agent> doGETPAgentListRequest(final String url, final Map<String, Object> queryParameter)
-			throws ProcessingException, WebApplicationException {
-		final Client client = this.clientBuilder.build();
-
-		final GenericType<List<Agent>> genericType = new GenericType<List<Agent>>() {
-		};
-
-		if (queryParameter == null) {
-			return client.target(url).request(MEDIA_TYPE).get(genericType);
-		} else {
-
-			WebTarget target = client.target(url);
-
-			for (final Map.Entry<String, Object> queryParam : queryParameter.entrySet()) {
-				target = target.queryParam(queryParam.getKey(), queryParam.getValue());
-			}
-
-			return target.request(MEDIA_TYPE).get(genericType);
-		}
-	}
-
 	public Agent doAgentPatchRequest(final Agent updatedAgent, final String url)
 			throws AgentInternalErrorException, AgentNoConnectionException {
 
@@ -173,6 +83,7 @@ public class ClientService {
 			}
 
 		} catch (final ProcessingException e) {
+			LOGGER.warn(LOGGER_MESSAGE, url, e.getMessage());
 			throw new AgentNoConnectionException(ResponseUtil.ERROR_NO_AGENT_CONNECTION_TIMEOUT, e);
 		}
 	}
@@ -181,6 +92,48 @@ public class ClientService {
 	public <T> Response doPatch(final T t, final String url) throws ProcessingException {
 		return this.clientBuilder.build().target(url).request(MEDIA_TYPE).build("PATCH", Entity.entity(t, MEDIA_TYPE))
 				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+	}
+
+	public Agent postAgent(final Agent agent, final String url)
+			throws ProcezzGenericException, GenericNoConnectionException {
+		final Client client = buildClient();
+
+		try {
+			final Response response = client.target(url).request(MEDIA_TYPE).post(Entity.entity(agent, MEDIA_TYPE));
+
+			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+				return response.readEntity(Agent.class);
+			} else {
+				final String errorResponse = response.readEntity(String.class);
+				throw new ProcezzGenericException(errorResponse, new Exception());
+			}
+		} catch (final ProcessingException e) {
+			LOGGER.warn(LOGGER_MESSAGE, url, e.getMessage());
+			throw new GenericNoConnectionException(ResponseUtil.ERROR_NO_AGENT_CONNECTION_TIMEOUT, e);
+		}
+	}
+
+	public List<Procezz> postProcezzList(final List<Procezz> procezzList, final String url)
+			throws ProcezzGenericException, GenericNoConnectionException {
+		final Client client = buildClient();
+
+		final GenericType<List<Procezz>> genericType = new GenericType<List<Procezz>>() {
+		};
+
+		try {
+			final Response response = client.target(url).request(MEDIA_TYPE)
+					.post(Entity.entity(procezzList, MEDIA_TYPE));
+
+			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+				return response.readEntity(genericType);
+			} else {
+				final String errorResponse = response.readEntity(String.class);
+				throw new ProcezzGenericException(errorResponse, new Exception());
+			}
+		} catch (final ProcessingException e) {
+			LOGGER.warn(LOGGER_MESSAGE, url, e.getMessage());
+			throw new GenericNoConnectionException(ResponseUtil.ERROR_NO_AGENT_CONNECTION_TIMEOUT, e);
+		}
 	}
 
 	private Client buildClient() {

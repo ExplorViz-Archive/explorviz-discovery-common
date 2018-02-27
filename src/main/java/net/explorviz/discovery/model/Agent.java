@@ -91,7 +91,7 @@ public class Agent extends BaseModel {
 
 	public void updateProcezz(final Procezz newProcezz) {
 		final Procezz oldProcezz = this.procezzes.stream().filter(Objects::nonNull)
-				.filter(p -> p.getId() == newProcezz.getId()).findFirst().orElse(null);
+				.filter(p -> p.getId().equals(newProcezz.getId())).findFirst().orElse(null);
 
 		if (oldProcezz != null) {
 

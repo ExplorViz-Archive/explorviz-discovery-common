@@ -45,6 +45,9 @@ public class Procezz extends BaseModel {
 	@JsonProperty("stopped")
 	private boolean stopped;
 
+	@JsonProperty("restart")
+	private boolean restart;
+
 	@JsonProperty("aop-content")
 	private String aopContent;
 
@@ -178,6 +181,14 @@ public class Procezz extends BaseModel {
 
 	public void setKiekerConfigContent(final String kiekerConfigContent) {
 		this.kiekerConfigContent = kiekerConfigContent;
+	}
+
+	public boolean isRestart() {
+		return restart;
+	}
+
+	public void setRestart(final boolean restart) {
+		this.restart = restart;
 	}
 
 	@Override

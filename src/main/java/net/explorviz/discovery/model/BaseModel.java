@@ -3,7 +3,6 @@ package net.explorviz.discovery.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.github.jasminb.jsonapi.LongIdHandler;
 import com.github.jasminb.jsonapi.annotations.Id;
 import com.github.jasminb.jsonapi.annotations.Type;
 
@@ -27,8 +26,8 @@ public class BaseModel {
 	@JsonProperty("error-message")
 	protected String errorMessage = "";
 
-	@Id(LongIdHandler.class)
-	protected Long id;
+	@Id
+	protected String id;
 
 	public boolean isHidden() {
 		return hidden;
@@ -38,11 +37,11 @@ public class BaseModel {
 		this.hidden = hidden;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(final Long id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
