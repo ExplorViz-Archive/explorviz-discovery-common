@@ -16,11 +16,6 @@ public class Procezz extends BaseModel {
 	@JsonProperty("os-execution-command")
 	private String osExecutionCommand;
 
-	// user-defined (in frontend-extension) executionCommand
-	// e.g. extended by javaagent
-	@JsonProperty("user-execution-command")
-	private String userExecutionCommand;
-
 	// execution command used by agent to restart
 	@JsonProperty("agent-execution-command")
 	private String agentExecutionCommand;
@@ -32,6 +27,22 @@ public class Procezz extends BaseModel {
 
 	@JsonProperty("working-directory")
 	private String workingDirectory;
+
+	@JsonProperty("programming-language")
+	private String programmingLanguage;
+
+	@JsonIgnore
+	private String procezzManagementType;
+
+	@Relationship(value = "agent")
+	private Agent agent;
+
+	// the following attributes can be changed by the user
+
+	// user-defined (in frontend-extension) executionCommand
+	// e.g. extended by javaagent
+	@JsonProperty("user-execution-command")
+	private String userExecutionCommand;
 
 	@JsonProperty("shutdown-command")
 	private String shutdownCommand;
@@ -53,12 +64,6 @@ public class Procezz extends BaseModel {
 
 	@JsonProperty("kieker-config-content")
 	private String kiekerConfigContent;
-
-	@JsonIgnore
-	private String procezzManagementType;
-
-	@Relationship(value = "agent")
-	private Agent agent;
 
 	public Procezz() {
 		// For JSON deserialization
@@ -189,6 +194,14 @@ public class Procezz extends BaseModel {
 
 	public void setRestart(final boolean restart) {
 		this.restart = restart;
+	}
+
+	public String getProgrammingLanguage() {
+		return programmingLanguage;
+	}
+
+	public void setProgrammingLanguage(final String programmingLanguage) {
+		this.programmingLanguage = programmingLanguage;
 	}
 
 	@Override

@@ -43,6 +43,12 @@
 	<rule ref="rulesets/java/empty.xml/EmptyCatchBlock" message="Throw at least an IllegalStateException(e)">
 		<priority>1</priority>
 	</rule>
+	
+	<rule ref="rulesets/java/codesize.xml/TooManyFields">
+		<properties>
+			<property name="maxfields" value="20" /> 
+		</properties> 
+	</rule>	
 
 	<rule ref="rulesets/java/comments.xml">
 		<exclude name="CommentRequired" />
