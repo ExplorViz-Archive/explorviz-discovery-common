@@ -7,17 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.explorviz.discovery.exceptions.mapper.ResponseUtil;
-import net.explorviz.discovery.exceptions.procezz.ProcezzManagementTypeNotFoundException;
+import net.explorviz.discovery.exceptions.procezz.ProcezzManagementTypeIncompatibleException;
 import net.explorviz.discovery.model.helper.ErrorObjectHelper;
 
-public class ProcezzManagementTypeNotFoundMapper implements ExceptionMapper<ProcezzManagementTypeNotFoundException> {
+public class ProcezzManagementTypeIncompatibleMapper
+		implements ExceptionMapper<ProcezzManagementTypeIncompatibleException> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProcezzManagementTypeNotFoundMapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProcezzManagementTypeIncompatibleMapper.class);
 
 	@Override
-	public Response toResponse(final ProcezzManagementTypeNotFoundException exception) {
+	public Response toResponse(final ProcezzManagementTypeIncompatibleException exception) {
 
-		LOGGER.error("Error occured while patching procezz. Error: {}", exception.getMessage());
+		LOGGER.error("Error occured while comparing procezzes. Error: {}", exception.getMessage());
 
 		if (exception.getFaultyProcezz() != null) {
 			exception.getFaultyProcezz().setErrorOccured(true);
