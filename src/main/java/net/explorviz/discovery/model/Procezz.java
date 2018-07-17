@@ -37,7 +37,7 @@ public class Procezz extends BaseModel {
 	@Relationship(value = "agent")
 	private Agent agent;
 
-	private final boolean wasFoundByBackend = false;
+	private boolean wasFoundByBackend = false;
 
 	// the following attributes can be changed by the user
 
@@ -204,6 +204,14 @@ public class Procezz extends BaseModel {
 
 	public void setProgrammingLanguage(final String programmingLanguage) {
 		this.programmingLanguage = programmingLanguage;
+	}
+
+	public boolean wasFoundByBackend() {
+		return wasFoundByBackend;
+	}
+
+	public void setWasFoundByBackend(final boolean wasFoundByBackend) {
+		this.wasFoundByBackend = wasFoundByBackend;
 	}
 
 	@Override
