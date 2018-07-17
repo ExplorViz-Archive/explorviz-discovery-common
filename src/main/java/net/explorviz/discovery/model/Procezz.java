@@ -37,6 +37,8 @@ public class Procezz extends BaseModel {
 	@Relationship(value = "agent")
 	private Agent agent;
 
+	private final boolean wasFoundByBackend = false;
+
 	// the following attributes can be changed by the user
 
 	// user-defined (in frontend-extension) executionCommand
