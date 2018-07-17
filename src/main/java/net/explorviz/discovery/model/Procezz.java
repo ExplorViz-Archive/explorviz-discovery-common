@@ -37,6 +37,7 @@ public class Procezz extends BaseModel {
 	@Relationship(value = "agent")
 	private Agent agent;
 
+	@JsonProperty("was-found-by-backend")
 	private boolean wasFoundByBackend = false;
 
 	// the following attributes can be changed by the user
