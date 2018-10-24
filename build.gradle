@@ -1,20 +1,5 @@
 apply from: 'https://raw.githubusercontent.com/ExplorViz/gradle-script-plugins/master/microservice.gradle'
 
-war {
-  archiveName = "${project.name}.${extension}"
-}
-
 jar {
   baseName = project.name 
 }
-
-// ##### BEGIN Jitpack section #####
-
-// War plugin typically disables jar build
-assemble.dependsOn jar
-
-artifacts {
-  archives jar
-}
-
-// ##### END Jitpack section #####
