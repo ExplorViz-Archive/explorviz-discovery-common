@@ -2,10 +2,10 @@ package net.explorviz.discovery.exceptions;
 
 public class GenericNoConnectionException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public GenericNoConnectionException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+  public GenericNoConnectionException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
 }
